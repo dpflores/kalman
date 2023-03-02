@@ -31,7 +31,7 @@ class LinearFilter:
 class ExtendedFilter:
     def __init__(self, xk0, yk0, uk0, Pk0):
         # Initial angular positions
-        self.xk = xk0   #np.array([[0, 0]]).T
+        self.xk = xk0   #np.array([[0, 0,..]]).T
 
         # Initial output
         self.yk = yk0   #np.array([[0, 0]]).T
