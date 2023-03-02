@@ -21,7 +21,7 @@ class LinearFilter:
     
     def correction_step(self, Hk, R):
         # 2a Optimal gain
-        Kk = self.Pk @ Hk.T @ np.linalg.inv(Hk @ self.Pk @ Hk.T + R)
+        Kk = self.Pk @ Hk @ np.linalg.inv(Hk @ self.Pk @ Hk.T + R)
 
         # 2b correction
         self.xk = self.xk + Kk @ (self.yk - Hk @ self.xk)
@@ -31,7 +31,7 @@ class LinearFilter:
 class ExtendedFilter:
     def __init__(self, xk0, yk0, uk0, Pk0):
         # Initial angular positions
-        self.xk = xk0   #np.array([[0, 0,..]]).T
+        self.xk = xk0   #np.array([[0, 0]]).T
 
         # Initial output
         self.yk = yk0   #np.array([[0, 0]]).T
@@ -49,7 +49,7 @@ class ExtendedFilter:
 
     def correction_step(self, h, Hk, Mk, R):
         # 2a Optimal gain
-        Kk = self.Pk @ Hk @ np.linalg.inv(Hk @ self.Pk @ Hk.T + Mk @ R @ Mk.T)
+        Kk = self.Pk @ Hk.T @ np.linalg.inv(Hk @ self.Pk @ Hk.T + Mk @ R @ Mk.T)
 
         # 2b correction
         self.xk = self.xk + Kk @ (self.yk - h)
