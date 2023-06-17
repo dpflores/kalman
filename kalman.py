@@ -21,7 +21,7 @@ class LinearFilter:
     
     def correction_step(self, Hk, R):
         # 2a Optimal gain
-        Kk = self.Pk @ Hk @ np.linalg.inv(Hk @ self.Pk @ Hk.T + R)
+        Kk = self.Pk @ Hk.T @ np.linalg.inv(Hk @ self.Pk @ Hk.T + R)
 
         # 2b correction
         self.xk = self.xk + Kk @ (self.yk - Hk @ self.xk)
