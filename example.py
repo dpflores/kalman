@@ -16,7 +16,6 @@ class SpeedFilter:
 
         # Valores iniciales
         self.xk = np.array([[0.0001, 0.0001, 0.0001]]).T    
-        self.yk = np.array([[0.0001]])
         self.uk = np.array([[0.0, 0.0, 0.0]]).T  
         self.Pk = 0.1*np.eye(3)
 
@@ -30,7 +29,7 @@ class SpeedFilter:
         self.Rk = np.array([[0.1]])             # De la medición
 
         # Inicializando filtro de kalman
-        self.speed_filter = kalman.ExtendedFilter(self.xk, self.yk, self.uk, self.Pk)
+        self.speed_filter = kalman.ExtendedFilter(self.xk, self.uk, self.Pk)
 
         # Subscriptores a los tópicos de velocidad
         rospy.Subscriber("/gps_speed", Float32, self.gps_callback)
@@ -68,16 +67,20 @@ class SpeedFilter:
         #     vx = 0.0001
         va = (vx**2 + vy**2 + vz**2)**(-1/2)    # constante solo para facilitar el trabajo
 
+        # Realizamos el modelo del sensor
         h = np.sqrt(vx**2 + vy**2 + vz**2)
 
+        # Obtenemos la matriz con respecto a las variables
         self.Hk = np.array([[vx*va, vy*va, vz*va]])
 
-        # Primero hace la correción con lo que ya tenemos
-        self.speed_filter.correction_step(h, self.Hk,self.Mk, self.Rk)
-
-        # Ahora si actualizamos
+        # Obtenemos la data del sensor
         gps_vel = np.array([[data.data]])*0.27778    # de km/h a m/s
-        self.speed_filter.yk = gps_vel
+        yk = gps_vel
+        
+        # Realizamos la correción
+        self.speed_filter.correction_step(yk, h, self.Hk,self.Mk, self.Rk)
+
+        
 
 
     def run(self):
